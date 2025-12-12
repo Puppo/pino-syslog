@@ -1,7 +1,7 @@
 'use strict'
 
-const { join } = require('path')
-const { spawnSync } = require('child_process')
+const { join } = require('node:path')
+const { spawnSync } = require('node:child_process')
 const { test } = require('node:test')
 
 test('syslog pino transport test stdout', t => {

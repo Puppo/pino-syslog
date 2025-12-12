@@ -1,7 +1,7 @@
 'use strict'
 
 const nopt = require('nopt')
-const path = require('path')
+const path = require('node:path')
 const pump = require('pump')
 const split2 = require('split2')
 const parseJson = require('fast-json-parse')

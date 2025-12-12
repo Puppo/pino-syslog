@@ -1,8 +1,8 @@
 'use strict'
 
-const os = require('os')
-const { join } = require('path')
-const { once } = require('events')
+const os = require('node:os')
+const { join } = require('node:path')
+const { once } = require('node:events')
 const { test } = require('node:test')
 const { createTcpListener } = require('pino-socket/test/utils')
 const pino = require('pino')

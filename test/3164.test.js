@@ -1,15 +1,15 @@
 'use strict'
 
-const path = require('path')
-const spawn = require('child_process').spawn
+const path = require('node:path')
+const spawn = require('node:child_process').spawn
 const { test } = require('node:test')
 const { join } = path
-const os = require('os')
-const fs = require('fs')
+const os = require('node:os')
+const fs = require('node:fs')
 const pino = require('pino')
-const { once } = require('events')
+const { once } = require('node:events')
 
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const timeout = promisify(setTimeout)
 
 const messages = require(path.join(__dirname, 'fixtures', 'messages'))
