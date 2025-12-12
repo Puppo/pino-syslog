@@ -3,5 +3,5 @@
 const neostandard = require('neostandard')
 
 module.exports = neostandard({
-  ignores: ['node_modules/']
+  ignores: neostandard.resolveIgnoresFromGitignore(),
 })
