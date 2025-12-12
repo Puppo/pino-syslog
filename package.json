@@ -29,7 +29,6 @@
   ],
   "devDependencies": {
     "eslint": "^9.39.1",
-    "lefthook": "^2.0.9",
     "neostandard": "^0.12.2",
     "pino": "^10.1.0",
     "pino-socket": "^7.4.0"
