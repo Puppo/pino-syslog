@@ -28,15 +28,11 @@
     "test"
   ],
   "devDependencies": {
-    "eslint": "^8.31.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.6.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint": "^9.39.1",
+    "lefthook": "^2.0.9",
+    "neostandard": "^0.12.2",
     "pino": "^10.1.0",
-    "pino-socket": "^7.4.0",
-    "pre-commit": "^1.2.2"
+    "pino-socket": "^7.4.0"
   },
   "dependencies": {
     "fast-json-parse": "^1.0.3",
