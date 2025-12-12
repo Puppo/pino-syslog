@@ -5,7 +5,7 @@ const path = require('path')
 const pump = require('pump')
 const split2 = require('split2')
 const parseJson = require('fast-json-parse')
-const { buildOptions } = require('./lib/utils')
+const { buildOptions } = require('./lib/utils.js')
 
 const longOpts = {
   modern: Boolean,

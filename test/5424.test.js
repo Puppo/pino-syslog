@@ -2,7 +2,7 @@
 
 const path = require('path')
 const spawn = require('child_process').spawn
-const test = require('tap').test
+const { test } = require('node:test')
 const os = require('os')
 const fs = require('fs')
 const pino = require('pino')
@@ -19,173 +19,221 @@ function configPath () {
   return path.join.apply(null, [__dirname, 'fixtures', 'configs'].concat(Array.from(arguments)))
 }
 
-test('skips non-json input', (t) => {
-  t.plan(1)
+test('skips non-json input', async (t) => {
   const psyslog = spawn('node', [psyslogPath])
 
   psyslog.stdout.on('data', (data) => {
-    t.fail('should not receive any data')
+    t.assert.fail('should not receive any data')
   })
 
-  psyslog.on('close', (code) => {
-    t.equal(code, 0)
+  const promise = new Promise((resolve) => {
+    psyslog.on('close', (code) => {
+      t.assert.strictEqual(code, 0)
+      resolve()
+    })
   })
 
   psyslog.stdin.end('this is not json\n')
+
+  await promise
 })
 
-test('hello world', (t) => {
-  t.plan(1)
+test('hello world', async (t) => {
   const header = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - '
   const psyslog = spawn('node', [psyslogPath])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, header + messages.helloWorld)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, header + messages.helloWorld)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('formats to message only', (t) => {
-  t.plan(1)
+test('formats to message only', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'messageOnly.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('sets application name', (t) => {
-  t.plan(1)
+test('sets application name', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 test 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'appname.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('sets facility', (t) => {
-  t.plan(1)
+test('sets facility', async (t) => {
   const expected = '<6>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'facility.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('sets timezone', (t) => {
-  t.plan(1)
+test('sets timezone', async (t) => {
   const expected = '<134>1 2016-04-01T12:44:58-04:00 MacBook-Pro-3 - 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'tz.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('prepends `@cee `', (t) => {
-  t.plan(1)
+test('prepends `@cee `', async (t) => {
   const header = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - @cee: '
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'cee.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, header + messages.helloWorld)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, header + messages.helloWorld)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('does not prepend `@cee ` for non-json messages', (t) => {
-  t.plan(1)
+test('does not prepend `@cee ` for non-json messages', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'ceeMessageOnly.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('appends newline', (t) => {
-  t.plan(1)
+test('appends newline', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - ' + messages.helloWorld + '\n'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'newline.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('write synchronously', (t) => {
-  t.plan(1)
+test('write synchronously', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - - ' + messages.helloWorld
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'sync.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('uses structured data', (t) => {
-  t.plan(1)
+test('uses structured data', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 - 94473 - [a@b x="y"] ' + messages.helloWorld
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'structuredData.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
-test('sets customLevels', (t) => {
-  t.plan(1)
+test('sets customLevels', async (t) => {
   const expected = '<134>1 2016-04-01T16:44:58Z MacBook-Pro-3 test 94473 - - hello world'
   const psyslog = spawn('node', [psyslogPath, '-c', configPath('5424', 'custom-level.json')])
 
-  psyslog.stdout.on('data', (data) => {
-    const msg = data.toString()
-    t.equal(msg, expected)
-    psyslog.kill()
+  const promise = new Promise((resolve) => {
+    psyslog.stdout.on('data', (data) => {
+      const msg = data.toString()
+      t.assert.strictEqual(msg, expected)
+      psyslog.kill()
+      resolve()
+    })
   })
 
   psyslog.stdin.write(messages.helloWorld + '\n')
+
+  await promise
 })
 
 function getConfigPath () {
@@ -196,7 +244,7 @@ function getConfigPath () {
 const pinoSyslog = join(__dirname, '..', 'lib', 'transport.js')
 
 test('syslog pino transport test rfc5424', async t => {
-  const destination = join(os.tmpdir(), 'pino-transport-test.log')
+  const destination = join(os.tmpdir(), 'pino-transport-test-5424.log')
 
   const fd = fs.openSync(destination, 'w+')
   const sysLogOptions = {
@@ -211,9 +259,9 @@ test('syslog pino transport test rfc5424', async t => {
     options: sysLogOptions
   })
   const log = pino(transport)
-  t.pass('built pino')
+  // t.pass('built pino')
   await once(transport, 'ready')
-  t.pass('transport ready ' + destination)
+  // t.pass('transport ready ' + destination)
 
   log.info(JSON.parse(messages.leadingDay))
   log.debug(JSON.parse(messages.helloWorld)) // it is skipped
@@ -222,6 +270,6 @@ test('syslog pino transport test rfc5424', async t => {
   await timeout(1000)
 
   const data = fs.readFileSync(destination, 'utf8').trim().split('\n')
-  t.ok(data[0].startsWith('<134>1 2018-02-03T01:20:00Z MacBook-Pro-3 - 94473 - - '), 'first line leadingDay')
-  t.ok(data[1].startsWith('<134>1 2018-02-10T01:20:00Z MacBook-Pro-3 - 94473 - - '), 'first line trailingDay')
+  t.assert.ok(data[0].startsWith('<134>1 2018-02-03T01:20:00Z MacBook-Pro-3 - 94473 - - '), 'first line leadingDay')
+  t.assert.ok(data[1].startsWith('<134>1 2018-02-10T01:20:00Z MacBook-Pro-3 - 94473 - - '), 'first line trailingDay')
 })
