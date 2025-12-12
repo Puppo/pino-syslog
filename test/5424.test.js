@@ -259,9 +259,9 @@ test('syslog pino transport test rfc5424', async t => {
     options: sysLogOptions
   })
   const log = pino(transport)
-  // t.pass('built pino')
+  t.assert.ok('built pino')
   await once(transport, 'ready')
-  // t.pass('transport ready ' + destination)
+  t.assert.ok('transport ready ' + destination)
 
   log.info(JSON.parse(messages.leadingDay))
   log.debug(JSON.parse(messages.helloWorld)) // it is skipped
