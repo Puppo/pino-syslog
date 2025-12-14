@@ -5,7 +5,7 @@
   "homepage": "https://github.com/pinojs/pino-syslog",
   "main": "lib/transport.js",
   "scripts": {
-    "test": "npm run lint && node --test 'test/**/*.test.js'",
+    "test": "npm run lint && node --test test/*.test.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
